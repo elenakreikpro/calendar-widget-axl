@@ -1,0 +1,416 @@
+(function() {
+    'use strict';
+
+    // Получаем параметры из data-атрибутов скрипта
+    const scriptTag = document.currentScript || document.querySelector('script[data-calendar-id]');
+    const calendarId = scriptTag?.getAttribute('data-calendar-id') || 'calendar-1';
+    const themeName = scriptTag?.getAttribute('data-theme') || 'theme-default';
+    const basePath = scriptTag?.getAttribute('data-base-path') || '';
+
+    // Определяем путь к конфигурации и теме
+    const configPath = basePath ? `${basePath}/config/${calendarId}.json` : `config/${calendarId}.json`;
+    const themePath = basePath ? `${basePath}/themes/${themeName}.css` : `themes/${themeName}.css`;
+
+    let CONFIG = {
+        scheduleDates: [],
+        position: 'top-right',
+        pulseSpeed: 2000
+    };
+
+    let escHandler = null;
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    // Загрузка конфигурации
+    async function loadConfig() {
+        try {
+            const response = await fetch(configPath);
+            if (!response.ok) {
+                throw new Error(`Failed to load config: ${response.status}`);
+            }
+            const data = await response.json();
+            CONFIG = {
+                scheduleDates: data.scheduleDates || [],
+                position: data.position || 'top-right',
+                pulseSpeed: data.pulseSpeed || 2000
+            };
+            return true;
+        } catch (error) {
+            console.error('Error loading calendar config:', error);
+            return false;
+        }
+    }
+
+    // Загрузка темы
+    function loadTheme() {
+        const existingTheme = document.getElementById('calendar-widget-theme');
+        if (existingTheme) {
+            existingTheme.remove();
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = themePath;
+        link.id = 'calendar-widget-theme';
+        document.head.appendChild(link);
+    }
+
+    // Удаление виджета
+    function removeWidget() {
+        const container = document.getElementById('calendar-widget-container');
+        const overlay = document.getElementById('calendar-modal-overlay');
+        const theme = document.getElementById('calendar-widget-theme');
+
+        if (container) container.remove();
+        if (overlay) overlay.remove();
+        if (theme) theme.remove();
+
+        if (escHandler) {
+            document.removeEventListener('keydown', escHandler);
+            escHandler = null;
+        }
+    }
+
+    const calendarIconSVG = `
+        <svg class="calendar-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+        </svg>
+    `;
+
+    function formatDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    function getDaysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function getFirstDayOfMonth(year, month) {
+        return new Date(year, month, 1).getDay();
+    }
+
+    function parseDate(dateString) {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    function getMonthName(month) {
+        const months = [
+            'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        ];
+        return months[month];
+    }
+
+    function renderCalendar(year, month) {
+        const daysInMonth = getDaysInMonth(year, month);
+        const firstDay = getFirstDayOfMonth(year, month);
+        const today = new Date();
+        const todayStr = formatDate(today);
+
+        const prevMonth = month === 0 ? 11 : month - 1;
+        const prevYear = month === 0 ? year - 1 : year;
+        const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
+
+        const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+        let html = '<div class="calendar-grid">';
+
+        dayNames.forEach(day => {
+            html += `<div class="calendar-day-header">${day}</div>`;
+        });
+
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const day = daysInPrevMonth - i;
+            const date = new Date(prevYear, prevMonth, day);
+            const dateStr = formatDate(date);
+            const event = CONFIG.scheduleDates.find(e => e.date === dateStr);
+
+            let classes = 'calendar-day other-month';
+            if (event) classes += ' has-event';
+            const style = event ? `border-color: ${event.color}; color: ${event.color};` : '';
+
+            html += `
+                <div class="${classes}" style="${style}" data-date="${dateStr}">
+                    <span class="calendar-day-number">${day}</span>
+                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                </div>
+            `;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dateStr = formatDate(date);
+            const event = CONFIG.scheduleDates.find(e => e.date === dateStr);
+            const isToday = dateStr === todayStr;
+
+            let classes = 'calendar-day';
+            if (isToday) classes += ' today';
+            if (event) classes += ' has-event';
+            const style = event ? `border-color: ${event.color}; color: ${event.color};` : '';
+
+            html += `
+                <div class="${classes}" style="${style}" data-date="${dateStr}">
+                    <span class="calendar-day-number">${day}</span>
+                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                </div>
+            `;
+        }
+
+        const totalCells = firstDay + daysInMonth;
+        const remainingCells = 42 - totalCells;
+        const nextMonth = month === 11 ? 0 : month + 1;
+        const nextYear = month === 11 ? year + 1 : year;
+
+        for (let day = 1; day <= remainingCells && day <= 14; day++) {
+            const date = new Date(nextYear, nextMonth, day);
+            const dateStr = formatDate(date);
+            const event = CONFIG.scheduleDates.find(e => e.date === dateStr);
+
+            let classes = 'calendar-day other-month';
+            if (event) classes += ' has-event';
+            const style = event ? `border-color: ${event.color}; color: ${event.color};` : '';
+
+            html += `
+                <div class="${classes}" style="${style}" data-date="${dateStr}">
+                    <span class="calendar-day-number">${day}</span>
+                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        return html;
+    }
+
+    function renderEventsList() {
+        const sortedEvents = [...CONFIG.scheduleDates]
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .filter(e => {
+                const eventDate = parseDate(e.date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return eventDate >= today;
+            });
+
+        if (sortedEvents.length === 0) {
+            return '<p style="color: #c9a961; text-align: center; padding: 20px;">Нет предстоящих событий</p>';
+        }
+
+        let html = '<div class="calendar-events-list">';
+        html += '<div class="calendar-events-title">Предстоящие события</div>';
+
+        sortedEvents.forEach(event => {
+            const date = parseDate(event.date);
+            const dateStr = date.toLocaleDateString('ru-RU', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            html += `
+                <div class="calendar-event-item" style="border-left-color: ${event.color}">
+                    <div class="calendar-event-date">${dateStr}</div>
+                    <div class="calendar-event-title">${event.title}</div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        return html;
+    }
+
+    function changeMonth(direction) {
+        if (direction === 'prev') {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+        } else if (direction === 'next') {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+        }
+        updateCalendar();
+    }
+
+    function updateCalendar() {
+        const modal = document.querySelector('.calendar-modal');
+        if (modal) {
+            const calendarHTML = renderCalendar(currentYear, currentMonth);
+            const monthYear = getMonthName(currentMonth) + ' ' + currentYear;
+
+            const navHTML = `
+                <div class="calendar-navigation">
+                    <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                    <div class="calendar-month-year">${monthYear}</div>
+                    <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                </div>
+            `;
+
+            const header = modal.querySelector('.calendar-modal-header');
+            const oldNav = modal.querySelector('.calendar-navigation');
+            const oldCalendar = modal.querySelector('.calendar-grid');
+
+            if (oldNav) oldNav.remove();
+            if (oldCalendar) oldCalendar.remove();
+
+            header.insertAdjacentHTML('afterend', navHTML);
+            modal.querySelector('.calendar-navigation').insertAdjacentHTML('afterend', calendarHTML);
+
+            document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+            document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+        }
+    }
+
+    function createModal() {
+        const overlay = document.createElement('div');
+        overlay.className = 'calendar-modal-overlay';
+        overlay.id = 'calendar-modal-overlay';
+
+        const modal = document.createElement('div');
+        modal.className = 'calendar-modal';
+
+        const now = new Date();
+        currentMonth = now.getMonth();
+        currentYear = now.getFullYear();
+        const calendarHTML = renderCalendar(currentYear, currentMonth);
+        const eventsHTML = renderEventsList();
+        const monthYear = getMonthName(currentMonth) + ' ' + currentYear;
+
+        modal.innerHTML = `
+            <div class="calendar-modal-header">
+                <h2 class="calendar-modal-title">Календарь расписания</h2>
+                <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
+            </div>
+            <div class="calendar-navigation">
+                <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                <div class="calendar-month-year">${monthYear}</div>
+                <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+            </div>
+            ${calendarHTML}
+            ${eventsHTML}
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('calendar-close-btn').addEventListener('click', closeModal);
+        document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+        document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+
+        if (!escHandler) {
+            escHandler = (e) => {
+                const overlay = document.getElementById('calendar-modal-overlay');
+                if (e.key === 'Escape' && overlay && overlay.classList.contains('active')) {
+                    closeModal();
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+    }
+
+    function openModal() {
+        const overlay = document.getElementById('calendar-modal-overlay');
+        if (overlay) {
+            const now = new Date();
+            currentMonth = now.getMonth();
+            currentYear = now.getFullYear();
+
+            const calendarHTML = renderCalendar(currentYear, currentMonth);
+            const eventsHTML = renderEventsList();
+            const monthYear = getMonthName(currentMonth) + ' ' + currentYear;
+
+            const modal = overlay.querySelector('.calendar-modal');
+            modal.innerHTML = `
+                <div class="calendar-modal-header">
+                    <h2 class="calendar-modal-title">Календарь расписания</h2>
+                    <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
+                </div>
+                <div class="calendar-navigation">
+                    <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                    <div class="calendar-month-year">${monthYear}</div>
+                    <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                </div>
+                ${calendarHTML}
+                ${eventsHTML}
+            `;
+
+            document.getElementById('calendar-close-btn').addEventListener('click', closeModal);
+            document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+            document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal() {
+        const overlay = document.getElementById('calendar-modal-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function createWidget() {
+        // Проверяем, не создан ли уже виджет
+        if (document.getElementById('calendar-widget-container')) {
+            return;
+        }
+
+        // Создаём кнопку виджета
+        const container = document.createElement('div');
+        container.className = `calendar-widget-container ${CONFIG.position === 'top-left' ? 'top-left' : ''}`;
+        container.id = 'calendar-widget-container';
+
+        const button = document.createElement('div');
+        button.className = 'calendar-widget-button';
+        button.innerHTML = calendarIconSVG;
+        button.addEventListener('click', openModal);
+
+        container.appendChild(button);
+        document.body.appendChild(container);
+
+        // Создаём модальное окно
+        createModal();
+    }
+
+    // Инициализация
+    async function init() {
+        function waitForBody() {
+            if (!document.body) {
+                setTimeout(waitForBody, 50);
+                return;
+            }
+
+            // Загружаем тему
+            loadTheme();
+
+            // Загружаем конфигурацию и создаем виджет
+            loadConfig().then(success => {
+                if (success) {
+                    createWidget();
+                } else {
+                    console.warn('Using default config due to load error');
+                    createWidget();
+                }
+            });
+        }
+
+        waitForBody();
+    }
+
+    init();
+})();
