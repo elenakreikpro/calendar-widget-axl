@@ -78,7 +78,7 @@
 
     // Проверка изменения URL и удаление виджета при навигации
     function checkUrlChange() {
-        const newUrl = window.location.href;
+        const newUrl = window.location.pathname + window.location.search;
         if (newUrl !== currentUrl) {
             currentUrl = newUrl;
             removeWidget();
@@ -485,8 +485,10 @@
     }
 
     function createWidget() {
-        // Удаляем существующий виджет, если есть (для повторного появления на той же странице)
-        removeWidget();
+        // Проверяем, не создан ли уже виджет
+        if (document.getElementById('calendar-widget-container')) {
+            return;
+        }
 
         // Создаём кнопку виджета
         const container = document.createElement('div');
@@ -518,18 +520,15 @@
 
             // Отслеживаем навигацию назад/вперед
             window.addEventListener('popstate', checkUrlChange);
-            
-            // Удаляем виджет при полной перезагрузке/закрытии
-            window.addEventListener('beforeunload', removeWidget);
-
-            // Проверяем изменения URL каждые 50ms (на случай других способов навигации)
-            setInterval(checkUrlChange, 50);
 
             // Загружаем тему
             loadTheme();
 
             // Создаем виджет сразу (без задержки на загрузку конфигурации)
             createWidget();
+
+            // Проверяем изменения URL каждые 100ms (после создания виджета, чтобы не удалить его сразу)
+            setInterval(checkUrlChange, 100);
 
             // Загружаем конфигурацию асинхронно и обновляем виджет
             loadConfig().then(success => {
