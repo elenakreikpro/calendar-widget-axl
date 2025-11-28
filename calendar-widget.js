@@ -25,7 +25,8 @@
     let CONFIG = {
         scheduleDates: [],
         position: 'top-right',
-        pulseSpeed: 2000
+        pulseSpeed: 2000,
+        maxEvents: 10
     };
 
     let escHandler = null;
@@ -44,7 +45,8 @@
             CONFIG = {
                 scheduleDates: data.scheduleDates || [],
                 position: data.position || 'top-right',
-                pulseSpeed: data.pulseSpeed || 2000
+                pulseSpeed: data.pulseSpeed || 2000,
+                maxEvents: data.maxEvents || 10
             };
             return true;
         } catch (error) {
@@ -83,12 +85,37 @@
         }
     }
 
-    // Проверка изменения URL и удаление виджета при навигации
+    // Проверка изменения URL и удаление/пересоздание виджета при навигации
     function checkUrlChange() {
         const newUrl = window.location.pathname + window.location.search;
         if (newUrl !== currentUrl) {
+            const oldUrl = currentUrl;
             currentUrl = newUrl;
             removeWidget();
+            // Если вернулись на страницу с виджетом, пересоздаем его
+            // Проверяем наличие скрипта с data-calendar-id на странице
+            const scriptTag = document.currentScript || document.querySelector('script[data-calendar-id]');
+            if (scriptTag && document.body) {
+                // Небольшая задержка для завершения навигации
+                setTimeout(() => {
+                    // Проверяем, что виджета нет и мы на той же странице
+                    if (!document.getElementById('calendar-widget-container') && 
+                        window.location.pathname + window.location.search === newUrl) {
+                        loadTheme();
+                        createWidget();
+                        // Загружаем конфигурацию и обновляем виджет
+                        loadConfig().then(success => {
+                            if (success) {
+                                const overlay = document.getElementById('calendar-modal-overlay');
+                                if (overlay) {
+                                    updateCalendar();
+                                    updateEventsList();
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            }
         }
     }
 
@@ -223,10 +250,16 @@
 
     function renderEventsList() {
         let filteredEvents = [...CONFIG.scheduleDates];
+        let isPastDate = false;
         
         // Фильтруем по выбранной дате, если она указана
         if (selectedDate) {
             filteredEvents = filteredEvents.filter(e => e.date === selectedDate);
+            // Проверяем, является ли выбранная дата прошедшей
+            const selectedDateObj = parseDate(selectedDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            isPastDate = selectedDateObj < today;
         } else {
             // Показываем только предстоящие события, если дата не выбрана
             filteredEvents = filteredEvents.filter(e => {
@@ -235,6 +268,8 @@
                 today.setHours(0, 0, 0, 0);
                 return eventDate >= today;
             });
+            // Ограничиваем количество событий в общем списке
+            filteredEvents = filteredEvents.slice(0, CONFIG.maxEvents);
         }
 
         // Сортируем по дате
@@ -242,9 +277,10 @@
 
         let html = '<div class="calendar-events-list">';
         
-        // Заголовок всегда "Предстоящие события", кнопка показывается только при выборе конкретной даты
+        // Заголовок зависит от того, прошедшая ли дата
+        const titleText = isPastDate ? 'Прошедшие события' : 'Предстоящие события';
         html += '<div class="calendar-events-title" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">';
-        html += '<span>Предстоящие события</span>';
+        html += `<span>${titleText}</span>`;
         if (selectedDate) {
             html += '<button id="calendar-show-all-btn" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap;">Показать все события</button>';
         }

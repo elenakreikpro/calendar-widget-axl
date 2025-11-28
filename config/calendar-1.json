@@ -21,5 +21,6 @@
     }
   ],
   "position": "top-right",
-  "pulseSpeed": 2000
+  "pulseSpeed": 2000,
+  "maxEvents": 5
 }

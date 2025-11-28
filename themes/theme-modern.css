@@ -109,10 +109,30 @@
 }
 
 .calendar-event-tooltip {
+    position: absolute;
     background: rgba(26, 26, 46, 0.95);
     color: var(--calendar-accent-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 250px;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    bottom: 100%;
+    margin-bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
     border: 1px solid var(--calendar-border-color);
     box-shadow: 0 0 15px rgba(240, 147, 251, 0.4);
+}
+
+.calendar-day:hover .calendar-event-tooltip {
+    opacity: 1;
 }
 
 .calendar-events-title {
