@@ -2,7 +2,14 @@
     'use strict';
 
     // Получаем параметры из data-атрибутов скрипта
-    const scriptTag = document.currentScript || document.querySelector('script[data-calendar-id]');
+    // В Safari document.currentScript может быть null, используем более надежный способ
+    let scriptTag = document.currentScript;
+    if (!scriptTag) {
+        // Fallback для Safari и других браузеров, где currentScript не работает
+        const scripts = document.querySelectorAll('script[data-calendar-id]');
+        // Берем последний скрипт с data-calendar-id (самый свежий)
+        scriptTag = scripts.length > 0 ? scripts[scripts.length - 1] : null;
+    }
     const calendarId = scriptTag?.getAttribute('data-calendar-id') || 'calendar-1';
     const themeName = scriptTag?.getAttribute('data-theme') || 'theme-default';
     const basePath = scriptTag?.getAttribute('data-base-path') || '';
@@ -511,7 +518,7 @@
     }
 
     // Инициализация
-    async function init() {
+    function init() {
         function waitForBody() {
             if (!document.body) {
                 setTimeout(waitForBody, 50);
