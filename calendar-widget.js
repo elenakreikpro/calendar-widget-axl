@@ -23,6 +23,7 @@
     let escHandler = null;
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
+    let selectedDate = null; // null = показать все события, иначе - конкретная дата для фильтрации
 
     // Загрузка конфигурации
     async function loadConfig() {
@@ -213,41 +214,104 @@
     }
 
     function renderEventsList() {
-        const sortedEvents = [...CONFIG.scheduleDates]
-            .sort((a, b) => a.date.localeCompare(b.date))
-            .filter(e => {
+        let filteredEvents = [...CONFIG.scheduleDates];
+        
+        // Фильтруем по выбранной дате, если она указана
+        if (selectedDate) {
+            filteredEvents = filteredEvents.filter(e => e.date === selectedDate);
+        } else {
+            // Показываем только предстоящие события, если дата не выбрана
+            filteredEvents = filteredEvents.filter(e => {
                 const eventDate = parseDate(e.date);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 return eventDate >= today;
             });
-
-        if (sortedEvents.length === 0) {
-            return '<p style="color: #c9a961; text-align: center; padding: 20px;">Нет предстоящих событий</p>';
         }
 
-        let html = '<div class="calendar-events-list">';
-        html += '<div class="calendar-events-title">Предстоящие события</div>';
+        // Сортируем по дате
+        filteredEvents.sort((a, b) => a.date.localeCompare(b.date));
 
-        sortedEvents.forEach(event => {
-            const date = parseDate(event.date);
-            const dateStr = date.toLocaleDateString('ru-RU', {
+        let html = '<div class="calendar-events-list">';
+        
+        // Заголовок в зависимости от выбранной даты
+        if (selectedDate) {
+            const selectedDateObj = parseDate(selectedDate);
+            const dateStr = selectedDateObj.toLocaleDateString('ru-RU', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
+            html += '<div class="calendar-events-title">События на ' + dateStr + '</div>';
+            html += '<button id="calendar-show-all-btn" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 14px;">Показать все события</button>';
+        } else {
+            html += '<div class="calendar-events-title">Предстоящие события</div>';
+        }
 
-            html += `
-                <div class="calendar-event-item" style="border-left-color: ${event.color}">
-                    <div class="calendar-event-date">${dateStr}</div>
-                    <div class="calendar-event-title">${event.title}</div>
-                </div>
-            `;
-        });
+        if (filteredEvents.length === 0) {
+            html += '<p style="color: #c9a961; text-align: center; padding: 20px;">Нет событий</p>';
+        } else {
+            filteredEvents.forEach(event => {
+                const date = parseDate(event.date);
+                const dateStr = date.toLocaleDateString('ru-RU', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                html += `
+                    <div class="calendar-event-item" style="border-left-color: ${event.color}">
+                        <div class="calendar-event-date">${dateStr}</div>
+                        <div class="calendar-event-title">${event.title}</div>
+                    </div>
+                `;
+            });
+        }
 
         html += '</div>';
         return html;
+    }
+
+    // Обновление списка событий
+    function updateEventsList() {
+        const modal = document.querySelector('.calendar-modal');
+        if (modal) {
+            const oldEvents = modal.querySelector('.calendar-events-list');
+            if (oldEvents) {
+                const eventsHTML = renderEventsList();
+                oldEvents.outerHTML = eventsHTML;
+                
+                // Добавляем обработчик для кнопки "Показать все"
+                const showAllBtn = document.getElementById('calendar-show-all-btn');
+                if (showAllBtn) {
+                    showAllBtn.addEventListener('click', () => {
+                        selectedDate = null;
+                        updateEventsList();
+                    });
+                }
+            }
+        }
+    }
+
+    // Обработка клика на дату
+    function handleDateClick(dateStr) {
+        selectedDate = dateStr;
+        updateEventsList();
+    }
+
+    // Добавление обработчиков кликов на дни календаря
+    function addDateClickListeners() {
+        const dayElements = document.querySelectorAll('.calendar-day[data-date]');
+        dayElements.forEach(dayEl => {
+            dayEl.addEventListener('click', (e) => {
+                const dateStr = dayEl.getAttribute('data-date');
+                if (dateStr) {
+                    handleDateClick(dateStr);
+                }
+            });
+        });
     }
 
     function changeMonth(direction) {
@@ -266,7 +330,10 @@
                 currentMonth++;
             }
         }
+        // Сбрасываем выбранную дату при смене месяца
+        selectedDate = null;
         updateCalendar();
+        updateEventsList();
     }
 
     function updateCalendar() {
@@ -295,6 +362,9 @@
 
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+            
+            // Добавляем обработчики кликов на дни
+            addDateClickListeners();
         }
     }
 
@@ -315,7 +385,7 @@
 
         modal.innerHTML = `
             <div class="calendar-modal-header">
-                <h2 class="calendar-modal-title">Календарь расписания</h2>
+                <h2 class="calendar-modal-title">Расписание курса</h2>
                 <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
             </div>
             <div class="calendar-navigation">
@@ -339,6 +409,18 @@
         document.getElementById('calendar-close-btn').addEventListener('click', closeModal);
         document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
         document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+        
+        // Добавляем обработчики кликов на дни
+        addDateClickListeners();
+        
+        // Добавляем обработчик для кнопки "Показать все"
+        const showAllBtn = document.getElementById('calendar-show-all-btn');
+        if (showAllBtn) {
+            showAllBtn.addEventListener('click', () => {
+                selectedDate = null;
+                updateEventsList();
+            });
+        }
 
         if (!escHandler) {
             escHandler = (e) => {
@@ -365,7 +447,7 @@
             const modal = overlay.querySelector('.calendar-modal');
             modal.innerHTML = `
                 <div class="calendar-modal-header">
-                    <h2 class="calendar-modal-title">Календарь расписания</h2>
+                    <h2 class="calendar-modal-title">Расписание курса</h2>
                     <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
                 </div>
                 <div class="calendar-navigation">
@@ -380,6 +462,18 @@
             document.getElementById('calendar-close-btn').addEventListener('click', closeModal);
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+            
+            // Добавляем обработчики кликов на дни
+            addDateClickListeners();
+            
+            // Добавляем обработчик для кнопки "Показать все"
+            const showAllBtn = document.getElementById('calendar-show-all-btn');
+            if (showAllBtn) {
+                showAllBtn.addEventListener('click', () => {
+                    selectedDate = null;
+                    updateEventsList();
+                });
+            }
 
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -391,6 +485,8 @@
         if (overlay) {
             overlay.classList.remove('active');
             document.body.style.overflow = '';
+            // Сбрасываем выбранную дату при закрытии
+            selectedDate = null;
         }
     }
 
