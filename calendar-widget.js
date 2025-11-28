@@ -11,6 +11,9 @@
     const configPath = basePath ? `${basePath}/config/${calendarId}.json` : `config/${calendarId}.json`;
     const themePath = basePath ? `${basePath}/themes/${themeName}.css` : `themes/${themeName}.css`;
 
+    // Отслеживание текущего URL для обнаружения навигации
+    let currentUrl = window.location.href;
+
     let CONFIG = {
         scheduleDates: [],
         position: 'top-right',
@@ -70,6 +73,29 @@
             escHandler = null;
         }
     }
+
+    // Проверка изменения URL и удаление виджета при навигации
+    function checkUrlChange() {
+        const newUrl = window.location.href;
+        if (newUrl !== currentUrl) {
+            currentUrl = newUrl;
+            removeWidget();
+        }
+    }
+
+    // Перехватываем pushState и replaceState для отслеживания SPA навигации
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+        originalPushState.apply(history, args);
+        setTimeout(checkUrlChange, 0);
+    };
+    
+    history.replaceState = function(...args) {
+        originalReplaceState.apply(history, args);
+        setTimeout(checkUrlChange, 0);
+    };
 
     const calendarIconSVG = `
         <svg class="calendar-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -398,6 +424,15 @@
                 setTimeout(waitForBody, 50);
                 return;
             }
+
+            // Отслеживаем навигацию назад/вперед
+            window.addEventListener('popstate', checkUrlChange);
+            
+            // Удаляем виджет при полной перезагрузке/закрытии
+            window.addEventListener('beforeunload', removeWidget);
+
+            // Проверяем изменения URL каждые 100ms (на случай других способов навигации)
+            setInterval(checkUrlChange, 100);
 
             // Загружаем тему
             loadTheme();
