@@ -78,7 +78,10 @@
     `;
 
     function formatDate(date) {
-        return date.toISOString().split('T')[0];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     function getDaysInMonth(year, month) {
@@ -91,7 +94,7 @@
 
     function parseDate(dateString) {
         const [year, month, day] = dateString.split('-').map(Number);
-        return new Date(year, month - 1, day);
+        return new Date(year, month - 1, day, 0, 0, 0, 0);
     }
 
     function getMonthName(month) {
@@ -106,6 +109,7 @@
         const daysInMonth = getDaysInMonth(year, month);
         const firstDay = getFirstDayOfMonth(year, month);
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const todayStr = formatDate(today);
 
         const prevMonth = month === 0 ? 11 : month - 1;

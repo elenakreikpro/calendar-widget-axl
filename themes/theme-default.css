@@ -128,7 +128,6 @@
     font-weight: bold;
     color: var(--calendar-accent-color);
     margin: 0;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
 
 .calendar-modal-close {
@@ -195,7 +194,6 @@
     font-weight: bold;
     color: var(--calendar-accent-color);
     text-transform: capitalize;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
 }
 
 .calendar-grid {
@@ -297,7 +295,6 @@
     font-weight: bold;
     margin-bottom: 15px;
     color: var(--calendar-accent-color);
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
 }
 
 .calendar-event-item {
