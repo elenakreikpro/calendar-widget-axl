@@ -12,7 +12,8 @@
     const themePath = basePath ? `${basePath}/themes/${themeName}.css` : `themes/${themeName}.css`;
 
     // Отслеживание текущего URL для обнаружения навигации
-    let currentUrl = window.location.href;
+    // Используем pathname + search для более надежного отслеживания (игнорируем hash)
+    let currentUrl = window.location.pathname + window.location.search;
 
     let CONFIG = {
         scheduleDates: [],
@@ -234,20 +235,13 @@
 
         let html = '<div class="calendar-events-list">';
         
-        // Заголовок в зависимости от выбранной даты
+        // Заголовок всегда "Предстоящие события", кнопка показывается только при выборе конкретной даты
+        html += '<div class="calendar-events-title" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">';
+        html += '<span>Предстоящие события</span>';
         if (selectedDate) {
-            const selectedDateObj = parseDate(selectedDate);
-            const dateStr = selectedDateObj.toLocaleDateString('ru-RU', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            html += '<div class="calendar-events-title">События на ' + dateStr + '</div>';
-            html += '<button id="calendar-show-all-btn" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 14px;">Показать все события</button>';
-        } else {
-            html += '<div class="calendar-events-title">Предстоящие события</div>';
+            html += '<button id="calendar-show-all-btn" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap;">Показать все события</button>';
         }
+        html += '</div>';
 
         if (filteredEvents.length === 0) {
             html += '<p style="color: #c9a961; text-align: center; padding: 20px;">Нет событий</p>';
@@ -491,10 +485,8 @@
     }
 
     function createWidget() {
-        // Проверяем, не создан ли уже виджет
-        if (document.getElementById('calendar-widget-container')) {
-            return;
-        }
+        // Удаляем существующий виджет, если есть (для повторного появления на той же странице)
+        removeWidget();
 
         // Создаём кнопку виджета
         const container = document.createElement('div');
@@ -511,6 +503,9 @@
 
         // Создаём модальное окно
         createModal();
+
+        // Обновляем отслеживаемый URL после создания виджета
+        currentUrl = window.location.pathname + window.location.search;
     }
 
     // Инициализация
@@ -527,19 +522,64 @@
             // Удаляем виджет при полной перезагрузке/закрытии
             window.addEventListener('beforeunload', removeWidget);
 
-            // Проверяем изменения URL каждые 100ms (на случай других способов навигации)
-            setInterval(checkUrlChange, 100);
+            // Проверяем изменения URL каждые 50ms (на случай других способов навигации)
+            setInterval(checkUrlChange, 50);
 
             // Загружаем тему
             loadTheme();
 
-            // Загружаем конфигурацию и создаем виджет
+            // Создаем виджет сразу (без задержки на загрузку конфигурации)
+            createWidget();
+
+            // Загружаем конфигурацию асинхронно и обновляем виджет
             loadConfig().then(success => {
                 if (success) {
-                    createWidget();
+                    // Обновляем модальное окно с новой конфигурацией
+                    const overlay = document.getElementById('calendar-modal-overlay');
+                    if (overlay) {
+                        const modal = overlay.querySelector('.calendar-modal');
+                        if (modal) {
+                            const now = new Date();
+                            currentMonth = now.getMonth();
+                            currentYear = now.getFullYear();
+                            const calendarHTML = renderCalendar(currentYear, currentMonth);
+                            const eventsHTML = renderEventsList();
+                            const monthYear = getMonthName(currentMonth) + ' ' + currentYear;
+
+                            const oldNav = modal.querySelector('.calendar-navigation');
+                            const oldCalendar = modal.querySelector('.calendar-grid');
+                            const oldEvents = modal.querySelector('.calendar-events-list');
+
+                            if (oldNav) oldNav.remove();
+                            if (oldCalendar) oldCalendar.remove();
+                            if (oldEvents) oldEvents.remove();
+
+                            const header = modal.querySelector('.calendar-modal-header');
+                            header.insertAdjacentHTML('afterend', `
+                                <div class="calendar-navigation">
+                                    <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                                    <div class="calendar-month-year">${monthYear}</div>
+                                    <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                                </div>
+                                ${calendarHTML}
+                                ${eventsHTML}
+                            `);
+
+                            document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+                            document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+                            addDateClickListeners();
+                            
+                            const showAllBtn = document.getElementById('calendar-show-all-btn');
+                            if (showAllBtn) {
+                                showAllBtn.addEventListener('click', () => {
+                                    selectedDate = null;
+                                    updateEventsList();
+                                });
+                            }
+                        }
+                    }
                 } else {
                     console.warn('Using default config due to load error');
-                    createWidget();
                 }
             });
         }
