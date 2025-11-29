@@ -107,6 +107,12 @@
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.calendar-modal::-webkit-scrollbar {
+    display: none !important;
 }
 
 .calendar-modal-content {
