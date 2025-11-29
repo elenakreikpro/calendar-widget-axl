@@ -405,11 +405,8 @@
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
             
-            // Добавляем обработчики кликов на дни (сначала!)
+            // Добавляем обработчики кликов на дни
             addDateClickListeners();
-            
-            // Добавляем обработчики для tooltips (после кликов)
-            addTooltipHandlers();
         }
     }
 
@@ -511,11 +508,8 @@
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
             
-            // Добавляем обработчики кликов на дни (сначала!)
+            // Добавляем обработчики кликов на дни
             addDateClickListeners();
-            
-            // Добавляем обработчики для tooltips (после кликов)
-            addTooltipHandlers();
             
             // Добавляем обработчик для кнопки "Показать все"
             const showAllBtn = document.getElementById('calendar-show-all-btn');
@@ -666,8 +660,6 @@
                             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
                             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
                             addDateClickListeners();
-                            // Tooltip handlers добавляются после кликов, чтобы не мешать
-                            addTooltipHandlers();
                             
                             const showAllBtn = document.getElementById('calendar-show-all-btn');
                             if (showAllBtn) {
