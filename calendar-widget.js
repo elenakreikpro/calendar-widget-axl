@@ -93,14 +93,17 @@
             currentUrl = newUrl;
             removeWidget();
             // Если вернулись на страницу с виджетом, пересоздаем его
-            // Проверяем наличие скрипта с data-calendar-id на странице
-            const scriptTag = document.currentScript || document.querySelector('script[data-calendar-id]');
+            // Проверяем наличие скрипта с data-calendar-id на странице (более надежный способ)
+            const scripts = document.querySelectorAll('script[data-calendar-id]');
+            const scriptTag = scripts.length > 0 ? scripts[scripts.length - 1] : null;
             if (scriptTag && document.body) {
                 // Небольшая задержка для завершения навигации
                 setTimeout(() => {
                     // Проверяем, что виджета нет и мы на той же странице
+                    const currentUrlCheck = window.location.pathname + window.location.search;
                     if (!document.getElementById('calendar-widget-container') && 
-                        window.location.pathname + window.location.search === newUrl) {
+                        currentUrlCheck === newUrl && 
+                        document.querySelector('script[data-calendar-id]')) {
                         loadTheme();
                         createWidget();
                         // Загружаем конфигурацию и обновляем виджет
@@ -114,7 +117,7 @@
                             }
                         });
                     }
-                }, 100);
+                }, 150);
             }
         }
     }
@@ -257,9 +260,10 @@
             filteredEvents = filteredEvents.filter(e => e.date === selectedDate);
             // Проверяем, является ли выбранная дата прошедшей
             const selectedDateObj = parseDate(selectedDate);
+            selectedDateObj.setHours(0, 0, 0, 0); // Убеждаемся, что время 00:00:00
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            isPastDate = selectedDateObj < today;
+            isPastDate = selectedDateObj.getTime() < today.getTime();
         } else {
             // Показываем только предстоящие события, если дата не выбрана
             filteredEvents = filteredEvents.filter(e => {
@@ -570,8 +574,27 @@
             // Создаем виджет сразу (без задержки на загрузку конфигурации)
             createWidget();
 
-            // Проверяем изменения URL каждые 100ms (после создания виджета, чтобы не удалить его сразу)
-            setInterval(checkUrlChange, 100);
+            // Проверяем изменения URL каждые 200ms (после создания виджета, чтобы не удалить его сразу)
+            // Также проверяем, не нужно ли пересоздать виджет при возврате на страницу
+            setInterval(() => {
+                checkUrlChange();
+                // Дополнительная проверка: если виджета нет, но скрипт есть - создаем виджет
+                if (!document.getElementById('calendar-widget-container') && 
+                    document.querySelector('script[data-calendar-id]') && 
+                    document.body) {
+                    loadTheme();
+                    createWidget();
+                    loadConfig().then(success => {
+                        if (success) {
+                            const overlay = document.getElementById('calendar-modal-overlay');
+                            if (overlay) {
+                                updateCalendar();
+                                updateEventsList();
+                            }
+                        }
+                    });
+                }
+            }, 200);
 
             // Загружаем конфигурацию асинхронно и обновляем виджет
             loadConfig().then(success => {
