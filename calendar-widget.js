@@ -713,6 +713,7 @@
                             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
                             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
                             addDateClickListeners();
+                            addTooltipHandlers();
                             
                             const showAllBtn = document.getElementById('calendar-show-all-btn');
                             if (showAllBtn) {
