@@ -91,14 +91,14 @@
 .calendar-modal {
     background: var(--calendar-modal-bg);
     border-radius: 20px;
-    width: 90% !important;
-    max-width: min(800px, 95vw) !important;
+    width: 500px !important;
+    max-width: 500px !important;
     max-height: 90vh !important;
     min-height: 400px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    padding: 10px !important;
+    padding: 20px !important;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
     transform: scale(1);
     transition: transform 0.3s ease;
