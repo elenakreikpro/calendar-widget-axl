@@ -109,6 +109,8 @@
     box-sizing: border-box;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+    /* Hide scrollbar for Safari */
+    scrollbar-color: transparent transparent !important;
 }
 
 .calendar-modal::-webkit-scrollbar {
