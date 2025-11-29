@@ -434,7 +434,7 @@
     font-weight: bold;
     margin-bottom: 5px;
     color: var(--calendar-accent-color);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .calendar-event-title {
