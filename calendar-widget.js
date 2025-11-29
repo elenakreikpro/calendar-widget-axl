@@ -359,10 +359,14 @@
     function addTooltipHandlers() {
         const dayElements = document.querySelectorAll('.calendar-day.has-event');
         dayElements.forEach(dayEl => {
+            // Проверяем, не добавлен ли уже обработчик
+            if (dayEl._tooltipHandlerAdded) return;
+            dayEl._tooltipHandlerAdded = true;
+            
             const tooltip = dayEl.querySelector('.calendar-event-tooltip');
             if (tooltip) {
-                // Не клонируем элемент - это удаляет обработчики кликов
-                // Просто добавляем обработчик mouseenter для позиционирования tooltip
+                // Добавляем обработчик mouseenter для позиционирования tooltip
+                // Используем один обработчик, чтобы не дублировать
                 dayEl.addEventListener('mouseenter', (e) => {
                     const tooltipEl = dayEl.querySelector('.calendar-event-tooltip');
                     if (tooltipEl) {
@@ -395,7 +399,7 @@
                             }
                         }, 10);
                     }
-                });
+                }, { once: false });
             }
         });
     }
@@ -502,7 +506,7 @@
         // Добавляем обработчики кликов на дни
         addDateClickListeners();
         
-        // Добавляем обработчики для tooltips
+        // Добавляем обработчики для tooltips (только для элементов с событиями)
         addTooltipHandlers();
         
         // Добавляем обработчик для кнопки "Показать все"
@@ -710,6 +714,7 @@
                             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
                             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
                             addDateClickListeners();
+                            // Tooltip handlers добавляются после кликов, чтобы не мешать
                             addTooltipHandlers();
                             
                             const showAllBtn = document.getElementById('calendar-show-all-btn');
