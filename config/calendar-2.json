@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "name": "Календарь событий",
+    "description": "Расписание мероприятий"
+  },
+  "scheduleDates": [],
+  "position": "top-right",
+  "pulseSpeed": 2000,
+  "maxEvents": 5
+}

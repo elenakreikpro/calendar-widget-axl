@@ -15,6 +15,7 @@
 │   ├── theme-default.css       # Дефолтная тема (зелено-золотая)
 │   ├── theme-minimal.css       # Минималистичная тема (светлая)
 │   ├── theme-modern.css        # Современная тема (фиолетово-розовая)
+│   ├── theme-glamour.css       # Роскошная тема (кораллово-голубая)
 │   └── ...
 └── README.md                   # Документация
 ```
@@ -58,6 +59,7 @@ data-calendar-id="calendar-1"
 - `theme-default` - зелено-золотая тема (классическая)
 - `theme-minimal` - минималистичная светлая тема
 - `theme-modern` - современная фиолетово-розовая тема
+- `theme-glamour` - роскошная тема (кораллово-голубая с эффектами свечения)
 
 ```html
 data-theme="theme-minimal"
@@ -196,6 +198,15 @@ data-base-path="https://yourusername.github.io/calendar-widget-axl"
 <script src="https://elenakreikpro.github.io/calendar-widget-axl/calendar-widget.js" 
         data-calendar-id="calendar-1" 
         data-theme="theme-default"
+        data-base-path="https://elenakreikpro.github.io/calendar-widget-axl">
+</script>
+```
+
+### Пример 5: Роскошная тема с новым календарем
+```html
+<script src="https://elenakreikpro.github.io/calendar-widget-axl/calendar-widget.js" 
+        data-calendar-id="calendar-2" 
+        data-theme="theme-glamour"
         data-base-path="https://elenakreikpro.github.io/calendar-widget-axl">
 </script>
 ```
