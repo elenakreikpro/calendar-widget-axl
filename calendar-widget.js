@@ -201,7 +201,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -220,7 +220,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -242,7 +242,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -262,10 +262,8 @@
             const selectedDateObj = parseDate(selectedDate);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            // Сравниваем только даты (год, месяц, день), игнорируя время
-            const selectedDateOnly = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate());
-            const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            isPastDate = selectedDateOnly.getTime() < todayOnly.getTime();
+            // Сравниваем даты напрямую (parseDate уже возвращает дату с временем 00:00:00)
+            isPastDate = selectedDateObj.getTime() < today.getTime();
         } else {
             // Показываем только предстоящие события, если дата не выбрана
             filteredEvents = filteredEvents.filter(e => {
@@ -374,6 +372,7 @@
                         newTooltip.style.whiteSpace = 'normal';
                         newTooltip.style.wordWrap = 'break-word';
                         newTooltip.style.overflowWrap = 'break-word';
+                        newTooltip.style.wordBreak = 'break-word';
                         
                         // Небольшая задержка для правильного расчета размеров
                         setTimeout(() => {
