@@ -201,10 +201,10 @@
 }
 
 .calendar-modal-close:hover {
-    background: rgba(255, 255, 255, 0.5);
-    color: var(--calendar-text-primary);
-    border-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: rgba(78, 205, 196, 0.4);
+    color: var(--calendar-accent-light);
+    border-color: var(--calendar-accent-color);
+    box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
 }
 
 .calendar-navigation {
@@ -318,9 +318,9 @@
 }
 
 .calendar-day.has-event {
-    background: rgba(255, 255, 255, 0.25);
-    border: 2px solid var(--calendar-accent-color);
-    box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+    background: rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day.has-event::after {
