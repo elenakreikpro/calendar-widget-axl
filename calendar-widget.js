@@ -260,10 +260,12 @@
             filteredEvents = filteredEvents.filter(e => e.date === selectedDate);
             // Проверяем, является ли выбранная дата прошедшей
             const selectedDateObj = parseDate(selectedDate);
-            selectedDateObj.setHours(0, 0, 0, 0); // Убеждаемся, что время 00:00:00
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            isPastDate = selectedDateObj.getTime() < today.getTime();
+            // Сравниваем только даты (год, месяц, день), игнорируя время
+            const selectedDateOnly = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate());
+            const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            isPastDate = selectedDateOnly.getTime() < todayOnly.getTime();
         } else {
             // Показываем только предстоящие события, если дата не выбрана
             filteredEvents = filteredEvents.filter(e => {
@@ -406,6 +408,40 @@
             
             // Добавляем обработчики кликов на дни
             addDateClickListeners();
+            
+            // Исправляем позиционирование tooltips при наведении
+            const dayElements = document.querySelectorAll('.calendar-day.has-event');
+            dayElements.forEach(dayEl => {
+                const tooltip = dayEl.querySelector('.calendar-event-tooltip');
+                if (tooltip) {
+                    dayEl.addEventListener('mouseenter', () => {
+                        // Применяем стили для переноса строк
+                        tooltip.style.whiteSpace = 'normal';
+                        tooltip.style.wordWrap = 'break-word';
+                        tooltip.style.overflowWrap = 'break-word';
+                        
+                        // Проверяем, не выходит ли tooltip за правый край
+                        const rect = tooltip.getBoundingClientRect();
+                        const viewportWidth = window.innerWidth;
+                        if (rect.right > viewportWidth - 10) {
+                            // Позиционируем слева от элемента
+                            tooltip.style.left = 'auto';
+                            tooltip.style.right = '0';
+                            tooltip.style.transform = 'none';
+                        } else if (rect.left < 10) {
+                            // Позиционируем справа от элемента
+                            tooltip.style.left = '0';
+                            tooltip.style.right = 'auto';
+                            tooltip.style.transform = 'none';
+                        } else {
+                            // Центрируем
+                            tooltip.style.left = '50%';
+                            tooltip.style.right = 'auto';
+                            tooltip.style.transform = 'translateX(-50%)';
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -576,12 +612,16 @@
 
             // Проверяем изменения URL каждые 200ms (после создания виджета, чтобы не удалить его сразу)
             // Также проверяем, не нужно ли пересоздать виджет при возврате на страницу
-            setInterval(() => {
+            let urlCheckInterval = setInterval(() => {
                 checkUrlChange();
                 // Дополнительная проверка: если виджета нет, но скрипт есть - создаем виджет
+                const scriptTag = document.querySelector('script[data-calendar-id]');
                 if (!document.getElementById('calendar-widget-container') && 
-                    document.querySelector('script[data-calendar-id]') && 
-                    document.body) {
+                    scriptTag && 
+                    document.body &&
+                    document.body.contains(scriptTag)) {
+                    // Останавливаем интервал перед созданием виджета
+                    clearInterval(urlCheckInterval);
                     loadTheme();
                     createWidget();
                     loadConfig().then(success => {
@@ -593,6 +633,25 @@
                             }
                         }
                     });
+                    // Перезапускаем интервал после создания виджета
+                    urlCheckInterval = setInterval(() => {
+                        checkUrlChange();
+                        if (!document.getElementById('calendar-widget-container') && 
+                            document.querySelector('script[data-calendar-id]') && 
+                            document.body) {
+                            loadTheme();
+                            createWidget();
+                            loadConfig().then(success => {
+                                if (success) {
+                                    const overlay = document.getElementById('calendar-modal-overlay');
+                                    if (overlay) {
+                                        updateCalendar();
+                                        updateEventsList();
+                                    }
+                                }
+                            });
+                        }
+                    }, 200);
                 }
             }, 200);
 
