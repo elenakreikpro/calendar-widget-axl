@@ -109,9 +109,10 @@
 .calendar-modal-content {
     display: flex !important;
     flex-direction: column !important;
+    overflow: hidden !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    width: 100% !important;
+    max-height: 100% !important;
 }
 
 .calendar-modal-overlay.active .calendar-modal {
@@ -119,13 +120,13 @@
 }
 
 .calendar-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 10px !important;
     border-bottom: 2px solid var(--calendar-border-color);
-    flex-shrink: 0;
+    flex-shrink: 0 !important;
 }
 
 .calendar-modal-title {
@@ -205,10 +206,11 @@
 .calendar-grid {
     display: grid !important;
     grid-template-columns: repeat(7, 1fr) !important;
-    gap: clamp(3px, 0.8vw, 8px) !important;
+    gap: clamp(2px, 0.6vw, 6px) !important;
     margin-bottom: 10px !important;
     flex-shrink: 0 !important;
     width: 100% !important;
+    min-height: 0 !important;
 }
 
 .calendar-day-header {
@@ -270,7 +272,7 @@
 }
 
 .calendar-day-number {
-    font-size: clamp(12px, 1.5vw, 16px);
+    font-size: clamp(10px, 1.2vw, 14px) !important;
 }
 
 .calendar-event-tooltip {
@@ -307,11 +309,9 @@
     margin-top: 10px !important;
     padding-top: 10px !important;
     border-top: 2px solid var(--calendar-border-color);
-    flex: 1 1 auto !important;
-    min-height: 100px !important;
-    max-height: 100% !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    flex: 0 0 auto !important;
+    max-height: none !important;
+    overflow: visible !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important;
