@@ -178,7 +178,7 @@
 
 .calendar-modal-title {
     font-size: clamp(20px, 3vw, 28px);
-    font-weight: bold;
+    font-weight: 600;
     color: var(--calendar-text-primary);
     margin: 0;
     text-shadow: 0 3px 10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(78, 205, 196, 0.4);
@@ -234,7 +234,7 @@
     transition: all 0.2s ease;
     font-size: 20px;
     color: var(--calendar-accent-color);
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .calendar-nav-button:hover {
@@ -269,7 +269,7 @@
 
 .calendar-day-header {
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--calendar-text-primary);
     padding: 10px;
     font-size: 14px;
@@ -431,7 +431,7 @@
 }
 
 .calendar-event-date {
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 5px;
     color: var(--calendar-accent-color);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
