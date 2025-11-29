@@ -112,8 +112,7 @@
 .calendar-modal-content {
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
+    flex: 0 0 auto !important;
     width: 100% !important;
 }
 
@@ -160,11 +159,11 @@
 }
 
 .calendar-navigation {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding: clamp(10px, 1.5vw, 15px);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 8px !important;
+    padding: clamp(6px, 1vw, 10px) !important;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 12px;
     border: 1px solid var(--calendar-border-color);
