@@ -44,7 +44,7 @@
 
 .calendar-widget-button:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 30px rgba(255, 107, 107, 0.7), 0 0 40px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15), 0 0 40px rgba(255, 255, 255, 0.5);
     border-color: rgba(255, 255, 255, 0.9);
 }
 
@@ -57,7 +57,7 @@
         box-shadow: 0 4px 20px var(--calendar-shadow-primary), 0 0 30px rgba(255, 255, 255, 0.3);
     }
     50% {
-        box-shadow: 0 4px 30px rgba(255, 107, 107, 0.8), 0 0 50px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.5);
     }
 }
 
@@ -201,10 +201,10 @@
 }
 
 .calendar-modal-close:hover {
-    background: rgba(78, 205, 196, 0.4);
-    color: var(--calendar-accent-light);
-    border-color: var(--calendar-accent-color);
-    box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--calendar-text-primary);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-navigation {
@@ -238,11 +238,11 @@
 }
 
 .calendar-nav-button:hover {
-    background: rgba(78, 205, 196, 0.4);
-    color: var(--calendar-accent-light);
-    border-color: var(--calendar-accent-color);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--calendar-text-primary);
+    border-color: rgba(255, 255, 255, 0.9);
     transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-nav-button:active {
@@ -340,7 +340,7 @@
 
 .calendar-event-tooltip {
     position: absolute;
-    background: rgba(255, 107, 107, 1);
+    background: rgba(255, 255, 255, 0.95);
     color: var(--calendar-text-primary);
     padding: 10px 14px;
     border-radius: 8px;
@@ -359,11 +359,11 @@
     margin-bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
-    border: 2px solid rgba(78, 205, 196, 0.6);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(78, 205, 196, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     line-height: 1.5;
     backdrop-filter: none;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     font-weight: 500;
 }
 
