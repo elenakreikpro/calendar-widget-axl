@@ -32,33 +32,24 @@
     height: 60px;
     border-radius: 50%;
     background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.6), 0 0 30px rgba(255, 107, 107, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: pulse-glamour 2s ease-in-out infinite;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .calendar-widget-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 30px rgba(255, 107, 107, 0.8), 0 0 40px rgba(255, 107, 107, 0.6);
-    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .calendar-widget-button:active {
     transform: scale(0.95);
 }
 
-@keyframes pulse-glamour {
-    0%, 100% {
-        box-shadow: 0 4px 20px rgba(255, 107, 107, 0.6), 0 0 30px rgba(255, 107, 107, 0.4);
-    }
-    50% {
-        box-shadow: 0 4px 30px rgba(255, 107, 107, 0.8), 0 0 45px rgba(255, 107, 107, 0.6);
-    }
-}
 
 .calendar-icon {
     width: 32px;
