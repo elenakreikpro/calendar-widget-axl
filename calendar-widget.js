@@ -357,6 +357,52 @@
         });
     }
 
+    // Добавление обработчиков для tooltips с правильным позиционированием
+    function addTooltipHandlers() {
+        const dayElements = document.querySelectorAll('.calendar-day.has-event');
+        dayElements.forEach(dayEl => {
+            const tooltip = dayEl.querySelector('.calendar-event-tooltip');
+            if (tooltip) {
+                // Удаляем старые обработчики, если есть
+                const newDayEl = dayEl.cloneNode(true);
+                dayEl.parentNode.replaceChild(newDayEl, dayEl);
+                const newTooltip = newDayEl.querySelector('.calendar-event-tooltip');
+                
+                newDayEl.addEventListener('mouseenter', () => {
+                    if (newTooltip) {
+                        // Применяем стили для переноса строк
+                        newTooltip.style.whiteSpace = 'normal';
+                        newTooltip.style.wordWrap = 'break-word';
+                        newTooltip.style.overflowWrap = 'break-word';
+                        
+                        // Небольшая задержка для правильного расчета размеров
+                        setTimeout(() => {
+                            // Проверяем, не выходит ли tooltip за правый край
+                            const rect = newTooltip.getBoundingClientRect();
+                            const viewportWidth = window.innerWidth;
+                            if (rect.right > viewportWidth - 10) {
+                                // Позиционируем слева от элемента
+                                newTooltip.style.left = 'auto';
+                                newTooltip.style.right = '0';
+                                newTooltip.style.transform = 'none';
+                            } else if (rect.left < 10) {
+                                // Позиционируем справа от элемента
+                                newTooltip.style.left = '0';
+                                newTooltip.style.right = 'auto';
+                                newTooltip.style.transform = 'none';
+                            } else {
+                                // Центрируем
+                                newTooltip.style.left = '50%';
+                                newTooltip.style.right = 'auto';
+                                newTooltip.style.transform = 'translateX(-50%)';
+                            }
+                        }, 10);
+                    }
+                });
+            }
+        });
+    }
+
     function changeMonth(direction) {
         if (direction === 'prev') {
             if (currentMonth === 0) {
@@ -409,39 +455,8 @@
             // Добавляем обработчики кликов на дни
             addDateClickListeners();
             
-            // Исправляем позиционирование tooltips при наведении
-            const dayElements = document.querySelectorAll('.calendar-day.has-event');
-            dayElements.forEach(dayEl => {
-                const tooltip = dayEl.querySelector('.calendar-event-tooltip');
-                if (tooltip) {
-                    dayEl.addEventListener('mouseenter', () => {
-                        // Применяем стили для переноса строк
-                        tooltip.style.whiteSpace = 'normal';
-                        tooltip.style.wordWrap = 'break-word';
-                        tooltip.style.overflowWrap = 'break-word';
-                        
-                        // Проверяем, не выходит ли tooltip за правый край
-                        const rect = tooltip.getBoundingClientRect();
-                        const viewportWidth = window.innerWidth;
-                        if (rect.right > viewportWidth - 10) {
-                            // Позиционируем слева от элемента
-                            tooltip.style.left = 'auto';
-                            tooltip.style.right = '0';
-                            tooltip.style.transform = 'none';
-                        } else if (rect.left < 10) {
-                            // Позиционируем справа от элемента
-                            tooltip.style.left = '0';
-                            tooltip.style.right = 'auto';
-                            tooltip.style.transform = 'none';
-                        } else {
-                            // Центрируем
-                            tooltip.style.left = '50%';
-                            tooltip.style.right = 'auto';
-                            tooltip.style.transform = 'translateX(-50%)';
-                        }
-                    });
-                }
-            });
+            // Добавляем обработчики для tooltips
+            addTooltipHandlers();
         }
     }
 
@@ -489,6 +504,9 @@
         
         // Добавляем обработчики кликов на дни
         addDateClickListeners();
+        
+        // Добавляем обработчики для tooltips
+        addTooltipHandlers();
         
         // Добавляем обработчик для кнопки "Показать все"
         const showAllBtn = document.getElementById('calendar-show-all-btn');
@@ -542,6 +560,9 @@
             
             // Добавляем обработчики кликов на дни
             addDateClickListeners();
+            
+            // Добавляем обработчики для tooltips
+            addTooltipHandlers();
             
             // Добавляем обработчик для кнопки "Показать все"
             const showAllBtn = document.getElementById('calendar-show-all-btn');
