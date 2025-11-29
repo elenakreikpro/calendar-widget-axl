@@ -287,7 +287,7 @@
         html += '<div class="calendar-events-title" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">';
         html += `<span>${titleText}</span>`;
         if (selectedDate) {
-            html += '<button id="calendar-show-all-btn" style="background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap;">Показать все события</button>';
+            html += '<button id="calendar-show-all-btn" style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap;">Показать все события</button>';
         }
         html += '</div>';
 
