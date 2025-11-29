@@ -366,6 +366,14 @@
                 dayEl.parentNode.replaceChild(newDayEl, dayEl);
                 const newTooltip = newDayEl.querySelector('.calendar-event-tooltip');
                 
+                // Восстанавливаем обработчик клика после клонирования
+                const dateStr = newDayEl.getAttribute('data-date');
+                if (dateStr) {
+                    newDayEl.addEventListener('click', (e) => {
+                        handleDateClick(dateStr);
+                    });
+                }
+                
                 newDayEl.addEventListener('mouseenter', () => {
                     if (newTooltip) {
                         // Применяем стили для переноса строк
