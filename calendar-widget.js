@@ -201,7 +201,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -220,7 +220,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -242,7 +242,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -454,9 +454,6 @@
         
         // Добавляем обработчики кликов на дни
         addDateClickListeners();
-        
-        // Добавляем обработчики для tooltips (только для элементов с событиями)
-        addTooltipHandlers();
         
         // Добавляем обработчик для кнопки "Показать все"
         const showAllBtn = document.getElementById('calendar-show-all-btn');
