@@ -287,12 +287,12 @@
         html += '<div class="calendar-events-title" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">';
         html += `<span>${titleText}</span>`;
         if (selectedDate) {
-            html += '<button id="calendar-show-all-btn" style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap;">Показать все события</button>';
+            html += '<button id="calendar-show-all-btn" style="background: #ff6b6b; border: 2px solid #ff6b6b; color: #ffffff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap; font-weight: bold; transition: all 0.2s ease;">Показать все события</button>';
         }
         html += '</div>';
 
         if (filteredEvents.length === 0) {
-            html += '<p style="color: #c9a961; text-align: center; padding: 20px;">Нет событий</p>';
+            html += '<p style="color: #ffffff; text-align: center; padding: 20px; opacity: 0.8;">Нет событий</p>';
         } else {
             filteredEvents.forEach(event => {
                 const date = parseDate(event.date);
@@ -707,3 +707,4 @@
 
     init();
 })();
+
