@@ -204,11 +204,12 @@
 }
 
 .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: clamp(4px, 1vw, 10px);
-    margin-bottom: 15px;
-    flex-shrink: 0;
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: clamp(3px, 0.8vw, 8px) !important;
+    margin-bottom: 10px !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
 }
 
 .calendar-day-header {
@@ -220,19 +221,21 @@
 }
 
 .calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: clamp(4px, 0.8vw, 8px);
+    aspect-ratio: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: clamp(4px, 0.8vw, 8px) !important;
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    padding: clamp(2px, 0.5vw, 5px);
+    padding: clamp(2px, 0.5vw, 5px) !important;
     background: rgba(0, 0, 0, 0.1);
     color: var(--calendar-text-primary);
-    min-width: 0;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .calendar-day:hover {
@@ -302,16 +305,17 @@
 }
 
 .calendar-events-list {
-    margin-top: 15px;
-    padding-top: 15px;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
     border-top: 2px solid var(--calendar-border-color);
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex: 1 1 auto !important;
+    min-height: 100px !important;
+    max-height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
 }
 
 .calendar-events-list::-webkit-scrollbar {
