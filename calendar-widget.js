@@ -400,18 +400,34 @@
                 </div>
             `;
 
-            const header = modal.querySelector('.calendar-modal-header');
-            const oldNav = modal.querySelector('.calendar-navigation');
-            const oldCalendar = modal.querySelector('.calendar-grid');
+            const content = modal.querySelector('.calendar-modal-content');
+            if (content) {
+                const oldNav = content.querySelector('.calendar-navigation');
+                const oldCalendar = content.querySelector('.calendar-grid');
 
-            if (oldNav) oldNav.remove();
-            if (oldCalendar) oldCalendar.remove();
+                if (oldNav) oldNav.remove();
+                if (oldCalendar) oldCalendar.remove();
 
-            header.insertAdjacentHTML('afterend', navHTML);
-            modal.querySelector('.calendar-navigation').insertAdjacentHTML('afterend', calendarHTML);
+                content.insertAdjacentHTML('afterbegin', navHTML);
+                content.querySelector('.calendar-navigation').insertAdjacentHTML('afterend', calendarHTML);
 
-            document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
-            document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+                document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+                document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+            } else {
+                // Fallback для старой структуры
+                const header = modal.querySelector('.calendar-modal-header');
+                const oldNav = modal.querySelector('.calendar-navigation');
+                const oldCalendar = modal.querySelector('.calendar-grid');
+
+                if (oldNav) oldNav.remove();
+                if (oldCalendar) oldCalendar.remove();
+
+                header.insertAdjacentHTML('afterend', navHTML);
+                modal.querySelector('.calendar-navigation').insertAdjacentHTML('afterend', calendarHTML);
+
+                document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
+                document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
+            }
             
             // Добавляем обработчики кликов на дни
             addDateClickListeners();
@@ -438,13 +454,15 @@
                 <h2 class="calendar-modal-title">Расписание курса</h2>
                 <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
             </div>
-            <div class="calendar-navigation">
-                <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
-                <div class="calendar-month-year">${monthYear}</div>
-                <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+            <div class="calendar-modal-content">
+                <div class="calendar-navigation">
+                    <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                    <div class="calendar-month-year">${monthYear}</div>
+                    <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                </div>
+                ${calendarHTML}
+                ${eventsHTML}
             </div>
-            ${calendarHTML}
-            ${eventsHTML}
         `;
 
         overlay.appendChild(modal);
@@ -500,13 +518,15 @@
                     <h2 class="calendar-modal-title">Расписание курса</h2>
                     <button class="calendar-modal-close" id="calendar-close-btn">&times;</button>
                 </div>
-                <div class="calendar-navigation">
-                    <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
-                    <div class="calendar-month-year">${monthYear}</div>
-                    <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                <div class="calendar-modal-content">
+                    <div class="calendar-navigation">
+                        <button class="calendar-nav-button" id="calendar-prev-btn">‹</button>
+                        <div class="calendar-month-year">${monthYear}</div>
+                        <button class="calendar-nav-button" id="calendar-next-btn">›</button>
+                    </div>
+                    ${calendarHTML}
+                    ${eventsHTML}
                 </div>
-                ${calendarHTML}
-                ${eventsHTML}
             `;
 
             document.getElementById('calendar-close-btn').addEventListener('click', closeModal);
