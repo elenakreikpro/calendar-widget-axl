@@ -107,11 +107,12 @@
 }
 
 .calendar-modal-content {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    flex: 1;
-    min-height: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
 }
 
 .calendar-modal-overlay.active .calendar-modal {
