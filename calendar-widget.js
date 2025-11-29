@@ -355,54 +355,6 @@
         });
     }
 
-    // Добавление обработчиков для tooltips с правильным позиционированием
-    function addTooltipHandlers() {
-        const dayElements = document.querySelectorAll('.calendar-day.has-event');
-        dayElements.forEach(dayEl => {
-            // Проверяем, не добавлен ли уже обработчик
-            if (dayEl._tooltipHandlerAdded) return;
-            dayEl._tooltipHandlerAdded = true;
-            
-            const tooltip = dayEl.querySelector('.calendar-event-tooltip');
-            if (tooltip) {
-                // Добавляем обработчик mouseenter для позиционирования tooltip
-                // Используем один обработчик, чтобы не дублировать
-                dayEl.addEventListener('mouseenter', (e) => {
-                    const tooltipEl = dayEl.querySelector('.calendar-event-tooltip');
-                    if (tooltipEl) {
-                        // Применяем стили для переноса строк
-                        tooltipEl.style.whiteSpace = 'normal';
-                        tooltipEl.style.wordWrap = 'break-word';
-                        tooltipEl.style.overflowWrap = 'break-word';
-                        tooltipEl.style.wordBreak = 'break-word';
-                        
-                        // Небольшая задержка для правильного расчета размеров
-                        setTimeout(() => {
-                            // Проверяем, не выходит ли tooltip за правый край
-                            const rect = tooltipEl.getBoundingClientRect();
-                            const viewportWidth = window.innerWidth;
-                            if (rect.right > viewportWidth - 10) {
-                                // Позиционируем слева от элемента
-                                tooltipEl.style.left = 'auto';
-                                tooltipEl.style.right = '0';
-                                tooltipEl.style.transform = 'none';
-                            } else if (rect.left < 10) {
-                                // Позиционируем справа от элемента
-                                tooltipEl.style.left = '0';
-                                tooltipEl.style.right = 'auto';
-                                tooltipEl.style.transform = 'none';
-                            } else {
-                                // Центрируем
-                                tooltipEl.style.left = '50%';
-                                tooltipEl.style.right = 'auto';
-                                tooltipEl.style.transform = 'translateX(-50%)';
-                            }
-                        }, 10);
-                    }
-                }, { once: false });
-            }
-        });
-    }
 
     function changeMonth(direction) {
         if (direction === 'prev') {
