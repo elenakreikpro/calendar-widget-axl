@@ -201,10 +201,10 @@
 }
 
 .calendar-modal-close:hover {
-    background: rgba(78, 205, 196, 0.4);
-    color: var(--calendar-accent-light);
-    border-color: var(--calendar-accent-color);
-    box-shadow: 0 0 15px rgba(78, 205, 196, 0.6);
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--calendar-text-primary);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-navigation {
