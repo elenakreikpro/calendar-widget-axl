@@ -361,47 +361,37 @@
         dayElements.forEach(dayEl => {
             const tooltip = dayEl.querySelector('.calendar-event-tooltip');
             if (tooltip) {
-                // Удаляем старые обработчики, если есть
-                const newDayEl = dayEl.cloneNode(true);
-                dayEl.parentNode.replaceChild(newDayEl, dayEl);
-                const newTooltip = newDayEl.querySelector('.calendar-event-tooltip');
-                
-                // Восстанавливаем обработчик клика после клонирования
-                const dateStr = newDayEl.getAttribute('data-date');
-                if (dateStr) {
-                    newDayEl.addEventListener('click', (e) => {
-                        handleDateClick(dateStr);
-                    });
-                }
-                
-                newDayEl.addEventListener('mouseenter', () => {
-                    if (newTooltip) {
+                // Не клонируем элемент - это удаляет обработчики кликов
+                // Просто добавляем обработчик mouseenter для позиционирования tooltip
+                dayEl.addEventListener('mouseenter', (e) => {
+                    const tooltipEl = dayEl.querySelector('.calendar-event-tooltip');
+                    if (tooltipEl) {
                         // Применяем стили для переноса строк
-                        newTooltip.style.whiteSpace = 'normal';
-                        newTooltip.style.wordWrap = 'break-word';
-                        newTooltip.style.overflowWrap = 'break-word';
-                        newTooltip.style.wordBreak = 'break-word';
+                        tooltipEl.style.whiteSpace = 'normal';
+                        tooltipEl.style.wordWrap = 'break-word';
+                        tooltipEl.style.overflowWrap = 'break-word';
+                        tooltipEl.style.wordBreak = 'break-word';
                         
                         // Небольшая задержка для правильного расчета размеров
                         setTimeout(() => {
                             // Проверяем, не выходит ли tooltip за правый край
-                            const rect = newTooltip.getBoundingClientRect();
+                            const rect = tooltipEl.getBoundingClientRect();
                             const viewportWidth = window.innerWidth;
                             if (rect.right > viewportWidth - 10) {
                                 // Позиционируем слева от элемента
-                                newTooltip.style.left = 'auto';
-                                newTooltip.style.right = '0';
-                                newTooltip.style.transform = 'none';
+                                tooltipEl.style.left = 'auto';
+                                tooltipEl.style.right = '0';
+                                tooltipEl.style.transform = 'none';
                             } else if (rect.left < 10) {
                                 // Позиционируем справа от элемента
-                                newTooltip.style.left = '0';
-                                newTooltip.style.right = 'auto';
-                                newTooltip.style.transform = 'none';
+                                tooltipEl.style.left = '0';
+                                tooltipEl.style.right = 'auto';
+                                tooltipEl.style.transform = 'none';
                             } else {
                                 // Центрируем
-                                newTooltip.style.left = '50%';
-                                newTooltip.style.right = 'auto';
-                                newTooltip.style.transform = 'translateX(-50%)';
+                                tooltipEl.style.left = '50%';
+                                tooltipEl.style.right = 'auto';
+                                tooltipEl.style.transform = 'translateX(-50%)';
                             }
                         }, 10);
                     }
@@ -459,11 +449,11 @@
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
             
-            // Добавляем обработчики кликов на дни
-            addDateClickListeners();
-            
-            // Добавляем обработчики для tooltips
+            // Добавляем обработчики для tooltips (сначала, чтобы клонирование не удалило обработчики кликов)
             addTooltipHandlers();
+            
+            // Добавляем обработчики кликов на дни (после tooltips, чтобы добавить к клонированным элементам)
+            addDateClickListeners();
         }
     }
 
@@ -565,11 +555,11 @@
             document.getElementById('calendar-prev-btn').addEventListener('click', () => changeMonth('prev'));
             document.getElementById('calendar-next-btn').addEventListener('click', () => changeMonth('next'));
             
-            // Добавляем обработчики кликов на дни
-            addDateClickListeners();
-            
-            // Добавляем обработчики для tooltips
+            // Добавляем обработчики для tooltips (сначала, чтобы клонирование не удалило обработчики кликов)
             addTooltipHandlers();
+            
+            // Добавляем обработчики кликов на дни (после tooltips, чтобы добавить к клонированным элементам)
+            addDateClickListeners();
             
             // Добавляем обработчик для кнопки "Показать все"
             const showAllBtn = document.getElementById('calendar-show-all-btn');
