@@ -201,7 +201,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -220,7 +220,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -242,7 +242,7 @@
             html += `
                 <div class="${classes}" style="${style}" data-date="${dateStr}">
                     <span class="calendar-day-number">${day}</span>
-                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important;">${event.title}</div>` : ''}
+                    ${event ? `<div class="calendar-event-tooltip" style="white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; word-break: break-word !important; pointer-events: none !important;">${event.title}</div>` : ''}
                 </div>
             `;
         }
@@ -347,9 +347,17 @@
         const dayElements = document.querySelectorAll('.calendar-day[data-date]');
         dayElements.forEach(dayEl => {
             dayEl.addEventListener('click', (e) => {
-                const dateStr = dayEl.getAttribute('data-date');
-                if (dateStr) {
-                    handleDateClick(dateStr);
+                // Проверяем, что клик не по tooltip (хотя он должен иметь pointer-events: none)
+                if (e.target.classList.contains('calendar-event-tooltip')) {
+                    return;
+                }
+                // Используем closest для получения родительского .calendar-day, если клик по дочернему элементу
+                const clickedDay = e.target.closest('.calendar-day[data-date]');
+                if (clickedDay) {
+                    const dateStr = clickedDay.getAttribute('data-date');
+                    if (dateStr) {
+                        handleDateClick(dateStr);
+                    }
                 }
             });
         });
