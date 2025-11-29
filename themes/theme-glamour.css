@@ -181,7 +181,7 @@
     font-weight: 600;
     color: var(--calendar-text-primary);
     margin: 0;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 0, 0, 0.3);
     font-weight: 700;
 }
 
@@ -213,10 +213,10 @@
     justify-content: space-between !important;
     margin-bottom: 20px !important;
     padding: 15px !important;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     border: 1px solid var(--calendar-border-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
     backdrop-filter: blur(5px);
 }
@@ -235,6 +235,7 @@
     font-size: 20px;
     color: var(--calendar-text-primary);
     font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .calendar-nav-button:hover {
@@ -254,7 +255,7 @@
     font-weight: 600;
     color: var(--calendar-text-primary);
     text-transform: capitalize;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .calendar-grid {
@@ -294,7 +295,7 @@
     width: 100% !important;
     box-sizing: border-box !important;
     backdrop-filter: blur(3px);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     font-weight: 500;
 }
 
@@ -314,13 +315,13 @@
     color: var(--calendar-text-primary);
     font-weight: 700;
     box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .calendar-day.has-event {
-    background: rgba(0, 0, 0, 0.08);
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
 }
 
 .calendar-day.has-event::after {
@@ -330,8 +331,8 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--calendar-accent-color);
-    box-shadow: 0 0 8px var(--calendar-accent-color);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 .calendar-day-number {
@@ -341,7 +342,7 @@
 .calendar-event-tooltip {
     position: absolute;
     background: rgba(255, 255, 255, 0.95);
-    color: var(--calendar-text-primary);
+    color: #333333;
     padding: 10px 14px;
     border-radius: 8px;
     font-size: 13px;
@@ -360,7 +361,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     line-height: 1.5;
     backdrop-filter: none;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -409,38 +410,38 @@
     margin-bottom: 10px;
     color: var(--calendar-text-primary);
     flex-shrink: 0;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .calendar-event-item {
     padding: 12px;
     margin-bottom: 10px;
     border-radius: 8px;
-    border-left: 4px solid rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
     color: var(--calendar-text-primary);
     backdrop-filter: blur(5px);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .calendar-event-item:hover {
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.35);
     transform: translateX(5px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
 }
 
 .calendar-event-date {
     font-weight: 600;
     margin-bottom: 5px;
     color: var(--calendar-text-primary);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .calendar-event-title {
     color: var(--calendar-text-primary);
     opacity: 1;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     font-weight: 500;
 }
 
@@ -466,3 +467,4 @@
         font-size: 16px;
     }
 }
+
