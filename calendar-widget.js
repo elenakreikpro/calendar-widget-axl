@@ -64,7 +64,8 @@
 
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = themePath;
+        // Добавляем версию для обхода кеша
+        link.href = themePath + '?v=' + Date.now();
         link.id = 'calendar-widget-theme';
         document.head.appendChild(link);
     }

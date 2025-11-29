@@ -95,7 +95,8 @@ data-base-path="https://yourusername.github.io/calendar-widget-axl"
     }
   ],
   "position": "top-right",
-  "pulseSpeed": 2000
+  "pulseSpeed": 2000,
+  "maxEvents": 5
 }
 ```
 
@@ -110,6 +111,7 @@ data-base-path="https://yourusername.github.io/calendar-widget-axl"
   - `color`: цвет события в формате HEX (например, `#d4af37`)
 - **position**: позиция кнопки виджета (`top-right` или `top-left`). По умолчанию: `top-right`
 - **pulseSpeed**: скорость анимации пульсации в миллисекундах. По умолчанию: `2000`
+- **maxEvents**: максимальное количество событий в общем списке (когда не выбрана конкретная дата). По умолчанию: `10`
 
 ## Создание нового календаря
 
@@ -198,15 +200,6 @@ data-base-path="https://yourusername.github.io/calendar-widget-axl"
 <script src="https://elenakreikpro.github.io/calendar-widget-axl/calendar-widget.js" 
         data-calendar-id="calendar-1" 
         data-theme="theme-default"
-        data-base-path="https://elenakreikpro.github.io/calendar-widget-axl">
-</script>
-```
-
-### Пример 5: Роскошная тема с новым календарем
-```html
-<script src="https://elenakreikpro.github.io/calendar-widget-axl/calendar-widget.js" 
-        data-calendar-id="calendar-2" 
-        data-theme="theme-glamour"
         data-base-path="https://elenakreikpro.github.io/calendar-widget-axl">
 </script>
 ```
